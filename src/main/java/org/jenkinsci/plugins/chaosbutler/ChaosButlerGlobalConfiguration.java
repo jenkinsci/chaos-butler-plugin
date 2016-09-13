@@ -15,6 +15,7 @@
  */
 package org.jenkinsci.plugins.chaosbutler;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.model.Computer;
 import hudson.model.Executor;
@@ -43,6 +44,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.StaplerRequest;
 
 @Extension
+@SuppressFBWarnings("IS2_INCONSISTENT_SYNC")
 public class ChaosButlerGlobalConfiguration extends GlobalConfiguration {
 
     private static final Logger LOGGER = Logger.getLogger(ChaosButlerGlobalConfiguration.class.getName());
