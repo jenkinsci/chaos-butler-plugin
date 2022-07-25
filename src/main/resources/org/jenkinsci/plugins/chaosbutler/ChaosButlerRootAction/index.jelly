@@ -20,7 +20,7 @@
     <st:include page="sidepanel" it="${app}"/>
     <l:main-panel>
       <h1>
-        <l:icon src="${resURL}/plugin/chaos-butler/images/48x48/chaos-butler.png"/>
+        <l:icon src="symbol-chaos-butler plugin-chaos-butler" class="icon-xlg"/>
         ${%Chaos Butler}
       </h1>
       <p>
