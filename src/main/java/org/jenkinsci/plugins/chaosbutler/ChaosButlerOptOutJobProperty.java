@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2016 CloudBees, Inc.
  *
@@ -21,7 +22,7 @@ import hudson.model.JobProperty;
 import hudson.model.JobPropertyDescriptor;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 
 public class ChaosButlerOptOutJobProperty extends JobProperty<Job<?, ?>> {
 
@@ -45,7 +46,7 @@ public class ChaosButlerOptOutJobProperty extends JobProperty<Job<?, ?>> {
         }
 
         @Override
-        public JobProperty<?> newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+        public JobProperty<?> newInstance(StaplerRequest2 req, JSONObject formData) throws FormException {
             if (formData.isNullObject()) {
                 return null;
             }

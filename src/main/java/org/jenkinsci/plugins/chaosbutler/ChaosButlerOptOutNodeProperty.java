@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2016 CloudBees, Inc.
  *
@@ -21,7 +22,7 @@ import hudson.slaves.NodeProperty;
 import hudson.slaves.NodePropertyDescriptor;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 
 public class ChaosButlerOptOutNodeProperty extends NodeProperty<Node> {
 
@@ -45,7 +46,7 @@ public class ChaosButlerOptOutNodeProperty extends NodeProperty<Node> {
         }
 
         @Override
-        public NodeProperty<?> newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+        public NodeProperty<?> newInstance(StaplerRequest2 req, JSONObject formData) throws FormException {
             if (formData.isNullObject()) {
                 return null;
             }
