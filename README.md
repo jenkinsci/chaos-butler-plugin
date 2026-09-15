@@ -1,29 +1,35 @@
 # Chaos Butler Plugin
 
-This plugin aims to be an equivalent to the Chaos Monkey in Netflix's Simian Army. See this [plugin's wiki page][wiki] for more details.
+This plugin is the Jenkins equivalent of Netflix's Chaos Monkey from the Simian Army. It periodically disconnects a random Jenkins node to help validate the resilience of your infrastructure and operational processes.  See this [plugin's wiki page][wiki] for more details.
 
-# Environment
+## Environment
 
 The following build environment is required to build this plugin
 
-* `java-1.7` and `maven-3.3.9`
+* `java-21` and `maven-3.9.14` (or newer)
 
-# Build
+## Build
 
 To build the plugin locally:
 
-    mvn clean verify
+```
+mvn clean verify
+```
 
-# Release
+## Release
 
 To release the plugin:
 
-    mvn release:prepare release:perform -B
+```
+mvn release:prepare release:perform -B
+```
 
-# Test local instance
+## Test local instance
 
 To test in a local Jenkins instance
 
-    mvn hpi:run
+```
+mvn hpi:run
+```
 
-  [wiki]: http://wiki.jenkins-ci.org/display/JENKINS/Chaos+Butler+Plugin
+[wiki]: http://wiki.jenkins-ci.org/display/JENKINS/Chaos+Butler+Plugin
