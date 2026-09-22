@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2016 CloudBees, Inc.
  *
@@ -52,8 +51,10 @@ public class ChaosButlerOptOutNodeProperty extends NodeProperty<Node> {
             }
 
             NodeProperty<?> property = super.newInstance(req, formData);
-            return property instanceof ChaosButlerOptOutNodeProperty && ((ChaosButlerOptOutNodeProperty) property)
-                    .isOptOut() ? property : null;
+            return property instanceof ChaosButlerOptOutNodeProperty
+                            && ((ChaosButlerOptOutNodeProperty) property).isOptOut()
+                    ? property
+                    : null;
         }
 
         @Override
@@ -61,5 +62,4 @@ public class ChaosButlerOptOutNodeProperty extends NodeProperty<Node> {
             return false;
         }
     }
-
 }

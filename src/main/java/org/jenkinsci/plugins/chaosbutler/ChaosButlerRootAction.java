@@ -43,12 +43,12 @@ public class ChaosButlerRootAction implements RootAction {
 
     public String getNext() {
         ChaosButlerGlobalConfiguration config = ChaosButlerGlobalConfiguration.get();
-        return config.getInterval() > 0 ? Util
-                .getTimeSpanString(Math.max(0L, config.getNextWake() - System.currentTimeMillis())) : null;
+        return config.getInterval() > 0
+                ? Util.getTimeSpanString(Math.max(0L, config.getNextWake() - System.currentTimeMillis()))
+                : null;
     }
 
     public Map<Date, Node> getRecentVictims() {
         return ChaosButlerGlobalConfiguration.get().getRecentVictims();
     }
-
 }

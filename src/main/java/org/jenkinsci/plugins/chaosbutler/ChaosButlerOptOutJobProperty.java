@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2016 CloudBees, Inc.
  *
@@ -52,8 +51,10 @@ public class ChaosButlerOptOutJobProperty extends JobProperty<Job<?, ?>> {
             }
 
             JobProperty<?> property = super.newInstance(req, formData);
-            return property instanceof ChaosButlerOptOutJobProperty && ((ChaosButlerOptOutJobProperty) property)
-                    .isOptOut() ? property : null;
+            return property instanceof ChaosButlerOptOutJobProperty
+                            && ((ChaosButlerOptOutJobProperty) property).isOptOut()
+                    ? property
+                    : null;
         }
     }
 }

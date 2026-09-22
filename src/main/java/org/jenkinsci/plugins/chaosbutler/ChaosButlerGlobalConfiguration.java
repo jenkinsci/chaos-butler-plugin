@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2016 CloudBees, Inc.
  *
@@ -16,6 +15,7 @@
  */
 package org.jenkinsci.plugins.chaosbutler;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.model.Computer;
@@ -38,7 +38,6 @@ import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import edu.umd.cs.findbugs.annotations.CheckForNull;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
@@ -61,17 +60,7 @@ public class ChaosButlerGlobalConfiguration extends GlobalConfiguration {
     }
 
     public static ChaosButlerGlobalConfiguration get() {
-        var injector = Jenkins.get().getInjector();
-        if (injector == null) {
-            throw new IllegalStateException("Jenkins injector is not available");
-        }
-
-        var configuration = injector.getInstance(ChaosButlerGlobalConfiguration.class);
-        if (configuration == null) {
-            throw new IllegalStateException("Chaos Butler global configuration is not available");
-        }
-
-        return configuration;
+        return GlobalConfiguration.all().get(ChaosButlerGlobalConfiguration.class);
     }
 
     public long getInterval() {
@@ -133,8 +122,7 @@ public class ChaosButlerGlobalConfiguration extends GlobalConfiguration {
 
         for (Iterator<Node> iterator = candidates.iterator(); iterator.hasNext(); ) {
             Node n = iterator.next();
-            ChaosButlerOptOutNodeProperty nodeOptOpt =
-                    n.getNodeProperties().get(ChaosButlerOptOutNodeProperty.class);
+            ChaosButlerOptOutNodeProperty nodeOptOpt = n.getNodeProperties().get(ChaosButlerOptOutNodeProperty.class);
 
             if (nodeOptOpt != null && nodeOptOpt.isOptOut()) {
                 // node is opt-out, ignore it
@@ -179,8 +167,8 @@ public class ChaosButlerGlobalConfiguration extends GlobalConfiguration {
 
         LOGGER.log(Level.INFO, "The Chaos Butler has selected {0} as a victim...", displayName);
         if (listener != null) {
-            listener.getLogger().printf("[%tc] The Chaos Butler has selected %s as a victim...%n", new Date(),
-                    displayName);
+            listener.getLogger()
+                    .printf("[%tc] The Chaos Butler has selected %s as a victim...%n", new Date(), displayName);
         }
 
         Computer computer = victim.toComputer();
@@ -233,7 +221,8 @@ public class ChaosButlerGlobalConfiguration extends GlobalConfiguration {
         ListBoxModel result = new ListBoxModel();
         result.add(Messages.ChaosButlerGlobalConfiguration_Interval_Off(), "0");
         result.add(Messages.ChaosButlerGlobalConfiguration_Interval_1m(), Long.toString(TimeUnit.MINUTES.toMillis(1)));
-        result.add(Messages.ChaosButlerGlobalConfiguration_Interval_15m(), Long.toString(TimeUnit.MINUTES.toMillis(15)));
+        result.add(
+                Messages.ChaosButlerGlobalConfiguration_Interval_15m(), Long.toString(TimeUnit.MINUTES.toMillis(15)));
         result.add(Messages.ChaosButlerGlobalConfiguration_Interval_1h(), Long.toString(TimeUnit.HOURS.toMillis(1)));
         result.add(Messages.ChaosButlerGlobalConfiguration_Interval_8h(), Long.toString(TimeUnit.HOURS.toMillis(8)));
         result.add(Messages.ChaosButlerGlobalConfiguration_Interval_1d(), Long.toString(TimeUnit.DAYS.toMillis(1)));
