@@ -15,6 +15,7 @@
  */
 package org.jenkinsci.plugins.chaosbutler;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.model.Computer;
@@ -37,11 +38,10 @@ import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.CheckForNull;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 
 @Extension
 @SuppressFBWarnings("IS2_INCONSISTENT_SYNC")
@@ -60,7 +60,7 @@ public class ChaosButlerGlobalConfiguration extends GlobalConfiguration {
     }
 
     public static ChaosButlerGlobalConfiguration get() {
-        return Jenkins.getActiveInstance().getInjector().getInstance(ChaosButlerGlobalConfiguration.class);
+        return GlobalConfiguration.all().get(ChaosButlerGlobalConfiguration.class);
     }
 
     public long getInterval() {
@@ -110,17 +110,20 @@ public class ChaosButlerGlobalConfiguration extends GlobalConfiguration {
             nextStart = Math.max(nextStart, now) + interval;
             save();
         }
+
         LOGGER.log(Level.INFO, "The Chaos Butler is looking for a victim...");
         if (listener != null) {
             listener.getLogger().printf("[%tc] The Chaos Butler is looking for a victim...%n", new Date());
         }
+
         List<Node> candidates = new ArrayList<>();
-        candidates.add(Jenkins.getActiveInstance());
-        candidates.addAll(Jenkins.getActiveInstance().getNodes());
+        candidates.add(Jenkins.get());
+        candidates.addAll(Jenkins.get().getNodes());
+
         for (Iterator<Node> iterator = candidates.iterator(); iterator.hasNext(); ) {
             Node n = iterator.next();
-            ChaosButlerOptOutNodeProperty nodeOptOpt =
-                    n.getNodeProperties().get(ChaosButlerOptOutNodeProperty.class);
+            ChaosButlerOptOutNodeProperty nodeOptOpt = n.getNodeProperties().get(ChaosButlerOptOutNodeProperty.class);
+
             if (nodeOptOpt != null && nodeOptOpt.isOptOut()) {
                 // node is opt-out, ignore it
                 iterator.remove();
@@ -131,6 +134,7 @@ public class ChaosButlerGlobalConfiguration extends GlobalConfiguration {
                     iterator.remove();
                     continue;
                 }
+
                 for (Executor e : computer.getExecutors()) {
                     WorkUnit workUnit = e.getCurrentWorkUnit();
                     if (workUnit != null) {
@@ -148,6 +152,7 @@ public class ChaosButlerGlobalConfiguration extends GlobalConfiguration {
                 }
             }
         }
+
         if (candidates.isEmpty()) {
             LOGGER.log(Level.INFO, "The Chaos Butler cannot find a victim!");
             if (listener != null) {
@@ -155,18 +160,21 @@ public class ChaosButlerGlobalConfiguration extends GlobalConfiguration {
             }
             return;
         }
+
         int index = entropy.nextInt(candidates.size());
         Node victim = candidates.get(index);
         String displayName = victim.getDisplayName();
+
         LOGGER.log(Level.INFO, "The Chaos Butler has selected {0} as a victim...", displayName);
         if (listener != null) {
-            listener.getLogger().printf("[%tc] The Chaos Butler has selected %s as a victim...%n", new Date(),
-                    displayName);
+            listener.getLogger()
+                    .printf("[%tc] The Chaos Butler has selected %s as a victim...%n", new Date(), displayName);
         }
+
         Computer computer = victim.toComputer();
         if (victim instanceof Slave) {
             computer.disconnect(new ChaosButlerOfflineCause());
-        } else if (computer != null){
+        } else if (computer != null) {
             // cannot disconnect on master, so simulate by aborting all running jobs
             for (Executor e : computer.getExecutors()) {
                 if (e.getCurrentWorkUnit() != null) {
@@ -174,10 +182,12 @@ public class ChaosButlerGlobalConfiguration extends GlobalConfiguration {
                 }
             }
         }
+
         recentVictims.add(new AbstractMap.SimpleImmutableEntry<Date, Node>(new Date(), victim));
         if (recentVictims.size() > 10) {
             recentVictims.remove(0);
         }
+
         LOGGER.log(Level.INFO, "The Chaos Butler has killed {0}. Chaos reigns once more!", displayName);
         if (listener != null) {
             listener.getLogger()
@@ -191,13 +201,14 @@ public class ChaosButlerGlobalConfiguration extends GlobalConfiguration {
     }
 
     @Override
-    public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
+    public boolean configure(StaplerRequest2 req, JSONObject json) throws FormException {
         long i = 0;
         try {
             i = Integer.parseInt(json.getString("interval"));
         } catch (NumberFormatException e) {
             // fall through
         }
+
         try {
             setInterval(i);
             return true;
@@ -210,12 +221,12 @@ public class ChaosButlerGlobalConfiguration extends GlobalConfiguration {
         ListBoxModel result = new ListBoxModel();
         result.add(Messages.ChaosButlerGlobalConfiguration_Interval_Off(), "0");
         result.add(Messages.ChaosButlerGlobalConfiguration_Interval_1m(), Long.toString(TimeUnit.MINUTES.toMillis(1)));
-        result.add(Messages.ChaosButlerGlobalConfiguration_Interval_15m(), Long.toString(TimeUnit.MINUTES.toMillis(15)));
+        result.add(
+                Messages.ChaosButlerGlobalConfiguration_Interval_15m(), Long.toString(TimeUnit.MINUTES.toMillis(15)));
         result.add(Messages.ChaosButlerGlobalConfiguration_Interval_1h(), Long.toString(TimeUnit.HOURS.toMillis(1)));
         result.add(Messages.ChaosButlerGlobalConfiguration_Interval_8h(), Long.toString(TimeUnit.HOURS.toMillis(8)));
         result.add(Messages.ChaosButlerGlobalConfiguration_Interval_1d(), Long.toString(TimeUnit.DAYS.toMillis(1)));
         result.add(Messages.ChaosButlerGlobalConfiguration_Interval_7d(), Long.toString(TimeUnit.DAYS.toMillis(7)));
         return result;
     }
-
 }
