@@ -6,7 +6,7 @@ This plugin is the Jenkins equivalent of Netflix's Chaos Monkey from the Simian 
 
 The following build environment is required to build this plugin
 
-* `java-25` and `maven-3.9.16` (or newer)
+* `java-25` and `maven-3.9.16` 
 
 ## Build
 
