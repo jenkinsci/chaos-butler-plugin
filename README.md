@@ -53,6 +53,7 @@ screen:
 
 ![](docs/images/Screen_Shot_2016-09-21_at_09.06.46.png)
 ![](docs/images/Screen_Shot_2016-09-21_at_09.06.50.png)
+
 There is only one option to configure, the frequency at which the Chaos
 Butler will run. The available options are:
 
